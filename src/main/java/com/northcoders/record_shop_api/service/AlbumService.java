@@ -7,7 +7,7 @@ import java.util.List;
 public interface AlbumService {
     List<Album> getAllAlbums();
     Album getAlbumById(Long id);
-    Album postNewAlbum();
+    Album postNewAlbum(Album album);
     Album updateAlbum();
     boolean DeleteAlbum();
     // todo : get albums by query
