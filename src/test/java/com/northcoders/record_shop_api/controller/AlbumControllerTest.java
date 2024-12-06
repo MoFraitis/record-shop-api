@@ -4,14 +4,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.northcoders.record_shop_api.model.Album;
 import com.northcoders.record_shop_api.model.Genre;
 import com.northcoders.record_shop_api.service.AlbumServiceImpl;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -72,5 +73,49 @@ class AlbumControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].albumName").value("Album2"));
     }
 
+    @Test
+    @DisplayName("Returns an Album when passed an existing album id")
+    void testGetAlbumByIdValidId() throws Exception {
+
+        Album album = new Album(1L, "Album1", "Artist1", 2018L, Genre.HIP_HOP, 15);
+
+        when(mockAlbumService.getAlbumById(1L)).thenReturn(album);
+
+        this.mockMvcController.perform(
+                        MockMvcRequestBuilders.get("/api/v1/album/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect((MockMvcResultMatchers.jsonPath("$.id").value(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.albumName").value("Album1"));
+    }
+
+//    @Test
+//    @DisplayName("Returns - when passed an invalid album id")
+//    void testGetAlbumByIdInvalidId() throws Exception {
+//
+//        Album album = new Album(1L, "Album1", "Artist1", 2018L, Genre.HIP_HOP, 15);
+//
+////        when(mockAlbumService.getAlbumById(3L)).thenReturn();
+//
+//        this.mockMvcController.perform(
+//                        MockMvcRequestBuilders.get("/api/v1/album/3"))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
+
+
+    @Test
+    void testPostNewAlbumAddAlbum() throws Exception {
+
+        Album album = new Album(1L, "Album1", "Artist1", 2018L, Genre.HIP_HOP, 15);
+
+        when(mockAlbumService.postNewAlbum(album)).thenReturn(album);
+
+        this.mockMvcController.perform(
+                        MockMvcRequestBuilders.post("/api/v1/album")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(album)))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+//        verify(mockAlbumService, times(1)).postNewAlbum(album);
+    }
 
 }
