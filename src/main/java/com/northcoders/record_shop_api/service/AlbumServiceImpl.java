@@ -24,13 +24,10 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public Album getAlbumById(Long id) {
-//        Optional<Album> album = albumRepository.findById(id);
-//        if(album.isPresent()) {
-//            return album.get();
-//        } else {
-//            throw new ItemNotFoundException(String.format("Album with id '%s' cannot be found", id));
-//        }
-        return null;
+        Optional<Album> album = albumRepository.findById(id);
+        //        } else {
+        //            throw new ItemNotFoundException(String.format("Album with id '%s' cannot be found", id));
+        return album.orElse(null);
     }
 
     @Override
